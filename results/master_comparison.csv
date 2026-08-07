@@ -1,0 +1,4 @@
+Model,Accuracy,Weighted F1,Macro F1,Purity,Yield,Recovery
+Baseline,0.245,0.1943,0.1749,0.2465,0.2152,0.1011
+Random Forest,0.7895,0.7898,0.7747,0.7993,0.7612,0.6381
+MLP,0.8053,0.8055,0.7914,0.7965,0.7876,0.6605

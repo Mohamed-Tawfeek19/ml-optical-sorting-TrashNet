@@ -1,0 +1,4 @@
+Metric,Random Forest,MLP
+Purity,0.7993,0.7965
+Yield,0.7612,0.7876
+Recovery,0.6381,0.6605

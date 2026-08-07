@@ -1,0 +1,21 @@
+# Cross-platform dependencies for the optical sorting pipeline.
+# The conda file (optical-sorting-env.yml) pins exact Windows build strings and
+# will not solve on macOS or Linux; use this file instead on those platforms.
+
+numpy>=1.24,<3
+scipy>=1.10
+pandas>=2.0
+
+# Pinned to the minor version the models in results/ were pickled with.
+# scikit-learn does not guarantee pickle compatibility across minor releases,
+# so loading rf_final_model.pkl / mlp_final_model.pkl outside this range may
+# warn or fail. Retrain via notebooks 04 and 05 if you need a newer version.
+scikit-learn>=1.7,<1.8
+
+scikit-image>=0.21
+opencv-python>=4.8
+pillow>=10.0
+matplotlib>=3.7
+
+jupyter>=1.0
+notebook>=7.0

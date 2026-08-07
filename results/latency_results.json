@@ -1,0 +1,14 @@
+{
+  "feature_extraction_ms": 18.15183433301475,
+  "feature_extraction_std_ms": 0.12402511037158746,
+  "rf_classification_ms": 38.987729082437,
+  "rf_classification_std_ms": 1.9884117533511934,
+  "mlp_classification_ms": 0.10476375027792531,
+  "mlp_classification_std_ms": 0.0005655767506320294,
+  "rf_e2e_ms": 57.13956341545175,
+  "mlp_e2e_ms": 18.256598083292676,
+  "rf_throughput_per_second": 17.501008762163185,
+  "mlp_throughput_per_second": 54.7747173617816,
+  "rf_throughput_per_minute": 1050.0605257297912,
+  "mlp_throughput_per_minute": 3286.483041706896
+}

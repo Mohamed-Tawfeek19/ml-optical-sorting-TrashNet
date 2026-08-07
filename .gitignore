@@ -1,0 +1,28 @@
+# Dataset — not redistributed. Download separately (see README).
+datasets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Note: results/ IS committed. The trained models, extracted features and
+# figures are kept in the repo so demo_classifier.ipynb runs immediately on
+# clone without a 10-minute feature extraction and training pass.
