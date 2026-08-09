@@ -343,13 +343,6 @@ re-extracts features from all 2,527 images 21 times and takes roughly 20 minutes
 
 ## Technical notes
 
-**Class ordering.** scikit-learn orders classes alphabetically
-(`cardboard, glass, metal, paper, plastic, trash`), which is *not* the order of the
-`CLASSES` list. Anything labelling a confusion matrix, classification report or
-per-class table uses `CLASS_ORDER = sorted(CLASSES)` and passes it as `labels=` so the
-ordering is pinned explicitly. Passing an unsorted list to `target_names` or
-`display_labels` silently mislabels every per-class result without raising an error.
-
 **One feature pipeline.** All feature extraction lives in `src/features.py`. Notebook 02
 derives the pipeline step by step and then asserts the module reproduces it exactly, so
 training and evaluation cannot drift apart. Both the resize filter (Pillow's default
