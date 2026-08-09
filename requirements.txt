@@ -12,6 +12,9 @@ pandas>=2.0
 # warn or fail. Retrain via notebooks 04 and 05 if you need a newer version.
 scikit-learn>=1.7,<1.8
 
+# McNemar's exact test in notebook 15. Nothing else depends on it.
+statsmodels>=0.14
+
 scikit-image>=0.21
 opencv-python>=4.8
 pillow>=10.0

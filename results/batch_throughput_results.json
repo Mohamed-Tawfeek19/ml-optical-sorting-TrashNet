@@ -1,0 +1,175 @@
+{
+  "batch_sizes": [
+    1,
+    8,
+    32,
+    128
+  ],
+  "n_jobs_list": [
+    1,
+    2,
+    -1
+  ],
+  "n_timed_runs_per_config": 50,
+  "warmup_calls_discarded": 1,
+  "target_items_per_min": 1200,
+  "logical_cpus": 16,
+  "extraction_ms_per_item": {
+    "1": 18.414182004053146,
+    "8": 18.279277500405442,
+    "32": 18.33485462491808,
+    "128": 18.254681953112595
+  },
+  "n_jobs_1_fastest_rf_config": {
+    "1": true,
+    "8": true,
+    "32": true,
+    "128": true
+  },
+  "measurements": [
+    {
+      "Configuration": "RF n_jobs=1",
+      "Batch size": 1,
+      "Extraction ms/item": 18.414182004053146,
+      "Classification ms/item": 9.384721999522299,
+      "Classification std": 0.4343563195541668,
+      "Total ms/item": 27.798904003575444,
+      "Items/min": 2158.3584731355922
+    },
+    {
+      "Configuration": "RF n_jobs=1",
+      "Batch size": 8,
+      "Extraction ms/item": 18.279277500405442,
+      "Classification ms/item": 1.2175259995274246,
+      "Classification std": 0.04242176989715584,
+      "Total ms/item": 19.496803499932867,
+      "Items/min": 3077.427538324762
+    },
+    {
+      "Configuration": "RF n_jobs=1",
+      "Batch size": 32,
+      "Extraction ms/item": 18.33485462491808,
+      "Classification ms/item": 0.32061674988653976,
+      "Classification std": 0.006150632851592912,
+      "Total ms/item": 18.65547137480462,
+      "Items/min": 3216.2146318657888
+    },
+    {
+      "Configuration": "RF n_jobs=1",
+      "Batch size": 128,
+      "Extraction ms/item": 18.254681953112595,
+      "Classification ms/item": 0.09699948433990357,
+      "Classification std": 0.002306705867131744,
+      "Total ms/item": 18.3516814374525,
+      "Items/min": 3269.4551834117356
+    },
+    {
+      "Configuration": "RF n_jobs=2",
+      "Batch size": 1,
+      "Extraction ms/item": 18.414182004053146,
+      "Classification ms/item": 37.52003600355238,
+      "Classification std": 14.208045344517126,
+      "Total ms/item": 55.93421800760552,
+      "Items/min": 1072.6886356369841
+    },
+    {
+      "Configuration": "RF n_jobs=2",
+      "Batch size": 8,
+      "Extraction ms/item": 18.279277500405442,
+      "Classification ms/item": 4.025373250478879,
+      "Classification std": 0.7555904698400617,
+      "Total ms/item": 22.30465075088432,
+      "Items/min": 2690.0219452044616
+    },
+    {
+      "Configuration": "RF n_jobs=2",
+      "Batch size": 32,
+      "Extraction ms/item": 18.33485462491808,
+      "Classification ms/item": 1.1131752499204595,
+      "Classification std": 0.38337984989136187,
+      "Total ms/item": 19.44802987483854,
+      "Items/min": 3085.145404760344
+    },
+    {
+      "Configuration": "RF n_jobs=2",
+      "Batch size": 128,
+      "Extraction ms/item": 18.254681953112595,
+      "Classification ms/item": 0.3736298124931636,
+      "Classification std": 0.025717482960162363,
+      "Total ms/item": 18.62831176560576,
+      "Items/min": 3220.9037917639184
+    },
+    {
+      "Configuration": "RF n_jobs=-1",
+      "Batch size": 1,
+      "Extraction ms/item": 18.414182004053146,
+      "Classification ms/item": 36.170447994954884,
+      "Classification std": 9.748575027619713,
+      "Total ms/item": 54.58462999900803,
+      "Items/min": 1099.2105286981039
+    },
+    {
+      "Configuration": "RF n_jobs=-1",
+      "Batch size": 8,
+      "Extraction ms/item": 18.279277500405442,
+      "Classification ms/item": 4.536466249555815,
+      "Classification std": 1.4036248326947414,
+      "Total ms/item": 22.815743749961257,
+      "Items/min": 2629.763055613819
+    },
+    {
+      "Configuration": "RF n_jobs=-1",
+      "Batch size": 32,
+      "Extraction ms/item": 18.33485462491808,
+      "Classification ms/item": 1.077214750184794,
+      "Classification std": 0.2691077400783235,
+      "Total ms/item": 19.412069375102874,
+      "Items/min": 3090.8605796017578
+    },
+    {
+      "Configuration": "RF n_jobs=-1",
+      "Batch size": 128,
+      "Extraction ms/item": 18.254681953112595,
+      "Classification ms/item": 0.3815397655853303,
+      "Classification std": 0.04549511014603784,
+      "Total ms/item": 18.636221718697925,
+      "Items/min": 3219.5367121974805
+    },
+    {
+      "Configuration": "MLP",
+      "Batch size": 1,
+      "Extraction ms/item": 18.414182004053146,
+      "Classification ms/item": 0.2393819927237928,
+      "Classification std": 0.0427137391777795,
+      "Total ms/item": 18.65356399677694,
+      "Items/min": 3216.5434986240225
+    },
+    {
+      "Configuration": "MLP",
+      "Batch size": 8,
+      "Extraction ms/item": 18.279277500405442,
+      "Classification ms/item": 0.020586250175256282,
+      "Classification std": 0.006832192552495908,
+      "Total ms/item": 18.2998637505807,
+      "Items/min": 3278.7129356684995
+    },
+    {
+      "Configuration": "MLP",
+      "Batch size": 32,
+      "Extraction ms/item": 18.33485462491808,
+      "Classification ms/item": 0.008023624977795407,
+      "Classification std": 0.001189866498399987,
+      "Total ms/item": 18.342878249895875,
+      "Items/min": 3271.0242734310573
+    },
+    {
+      "Configuration": "MLP",
+      "Batch size": 128,
+      "Extraction ms/item": 18.254681953112595,
+      "Classification ms/item": 0.004531265622063074,
+      "Classification std": 0.0005806008369115871,
+      "Total ms/item": 18.259213218734658,
+      "Items/min": 3286.012342439689
+    }
+  ]
+}

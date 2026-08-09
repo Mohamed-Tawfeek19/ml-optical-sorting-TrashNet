@@ -1,6 +1,10 @@
 # Dataset — not redistributed. Download separately (see README).
 datasets/
 
+# Working log of the post-submission improvement passes. Local notes, not part
+# of the published repo; the findings themselves live in the README.
+CHANGELOG.md
+
 # Python
 __pycache__/
 *.py[cod]
