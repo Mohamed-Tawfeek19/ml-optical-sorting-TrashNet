@@ -56,7 +56,10 @@ fitting a logistic regression to the same three channel means the thresholds see
 thresholds were set by hand and not only because three channel means are a poor
 representation. Non-linearity is the smallest step at +10.00 points, which is the same
 shape of result finding 1 reaches from the other direction: once the representation is
-fixed, changing the classifier family buys progressively less.
+fixed, changing the classifier family buys progressively less. These are the gains along
+one path through the three changes rather than three independent contributions. Adding the
+descriptor before learning the boundary would divide the same 54.45 points differently,
+because the two interact.
 
 For external calibration, the original TrashNet work reported roughly 63% for an SVM on
 hand-designed features (Thung and Yang 2016), which the logistic regression here clears by
@@ -72,7 +75,7 @@ Per-class F1 on the 380-image test set:
 
 The 1.58 point accuracy gap between the RF and the MLP is six images out of 380, and
 notebook 15 measures what that is worth instead of asserting it. McNemar's exact test on
-the paired test-set predictions gives p = 0.53 — 28 images the RF alone gets right against
+the paired test-set predictions gives p = 0.53: 28 images the RF alone gets right against
 34 for the MLP, which is what two equally accurate classifiers disagreeing at random looks
 like. Re-running the whole split, train and evaluate loop at seeds 42, 1, 7, 13 and 99
 gives 77.95% ± 1.33 accuracy for the RF and 80.05% ± 1.88 for the MLP, with a mean
@@ -102,10 +105,13 @@ The linear baselines in notebook 14 make the point a third time and harder. On t
 features, logistic regression puts 21 images on that off-diagonal and the linear SVC 25,
 against 16 and 17 for the non-linear models. Three inductive biases, from a set of
 hyperplanes to an ensemble of trees, all break on the same pair, and the weaker the model
-the worse it breaks. Nothing about that pattern suggests a classifier is the missing
-piece.
+the worse it breaks. The structure of the failure changes as well as its size. Where the
+RF and MLP trade images between glass and metal roughly evenly, the linear models turn
+glass into an attractor: logistic regression sends 14 metal images and 12 plastic ones
+into it while the reverse directions stay small. Nothing about that pattern suggests a
+classifier is the missing piece.
 
-![Confusion matrices for logistic regression and the linear SVC, with the glass and metal off-diagonal cells the largest non-diagonal entries in both](results/figures/linear_baseline_confusion_matrices.png)
+![Confusion matrices for logistic regression and the linear SVC, with metal predicted as glass the largest off-diagonal entry in both](results/figures/linear_baseline_confusion_matrices.png)
 
 The mechanism is visible in the images. Transparent glass lets the grey background
 dominate its histogram, and metal is specular grey. Both land in the same low-saturation
@@ -122,10 +128,10 @@ survey's sensor taxonomy records no NIR application to metal or glass: both are 
 and present no such bands to read.
 
 Plants separate this pair with two mechanisms rather than one better camera. Metal comes
-out mechanically — magnetic separation first, then eddy-current separation, which induces
-circulating currents in non-ferrous particles and deflects them off the belt (Smith et al.
-2019) — or by inductive sensing where a sensor-based ejector is used instead (Friedrich et
-al. 2022). Glass is then graded optically, but in transmission rather than reflection,
+out mechanically, either by magnetic separation and then eddy-current separation, which
+induces circulating currents in non-ferrous particles and deflects them off the belt
+(Smith et al. 2019), or by inductive sensing where a sensor-based ejector is used instead
+(Friedrich et al. 2022). Glass is then graded optically, but in transmission rather than reflection,
 which is how colour cullet sorting works (Maier et al. 2024, §III-B.2). Where metals have
 to be told apart from each other rather than merely detected, combined electromagnetic and
 dual-energy X-ray transmission sensing separates aluminium, magnesium, copper and brass
@@ -150,25 +156,25 @@ Accuracy at worst-case severity for each perturbation:
 | Brightness reduction | 0.418 | 0.358 |
 | JPEG compression | 0.253 | 0.300 |
 
-Chance on six classes is 0.167. That is the floor every number in this table and in the
-severity curves below should be read against, and neither figure draws it.
+Chance on six classes is 0.167, which is the floor every number in this table and in the
+severity curves below should be read against.
 
 Two of these rows are noise. At worst-case Gaussian noise both models have already failed
 and the RF's lead is a lead inside a region where nothing works. The JPEG margin is small
-enough to ignore. The row that carries real
-information is motion blur, where the RF is 14.7 points ahead of a model it cannot be
+enough to ignore. The row that carries real information is motion blur, where the RF is 14.7 points ahead of a model it cannot be
 separated from on clean data, with brightness reduction showing the same ordering from
 the mildest severity onward.
 
-Notebook 12 explains why noise is so destructive. HSV histograms flatten toward uniform
-as pixels scatter across bins, while the LBP histogram collapses in the opposite
-direction, into its non-uniform catch-all bin, because noise breaks the smooth pixel
-transitions that produce uniform codes. Both halves of the descriptor lose their shape at
+Notebook 12 explains why noise is so destructive. The colour histograms stop being
+class-specific as pixels scatter across bins, each channel in its own way: hue flattens
+toward uniform, saturation broadens, and value shifts bodily upward. The LBP histogram
+fails in the opposite direction, collapsing into its non-uniform catch-all bin, because
+noise breaks the smooth pixel transitions that produce uniform codes. Both halves of the descriptor lose their shape at
 the same severity, which is why the drop from clean to mild noise is a cliff rather than
 a slope. That makes noise a hardware problem (illumination and sensor quality) or a
 pre-filtering problem, not something the classifier can absorb.
 
-![Mean feature vector per channel group under clean conditions, mild noise and severe noise, showing the H and S histograms flattening while the LBP histogram concentrates into its non-uniform catch-all bin](results/figures/gaussian_noise_feature_shift.png)
+![Mean feature vector per channel group under clean, mild and severe Gaussian noise, showing hue flattening, saturation broadening, value shifting upward and the LBP histogram concentrating into its non-uniform catch-all bin](results/figures/gaussian_noise_feature_shift.png)
 
 So the model choice is conditional on the imaging environment. In a controlled enclosure,
 take the MLP for its latency headroom. Where blur or illumination cannot be controlled,
@@ -181,7 +187,7 @@ take the RF.
 Feature extraction costs 18.2 ms and is identical in every pipeline, so 36% of the 50 ms
 budget is spent before any classifier runs. For the MLP the classifier is a rounding
 error at 0.10 ms, which means the descriptor is effectively the whole pipeline. Any
-further latency work has to go there — and one of the obvious routes is now measured and
+further latency work has to go there, and one of the obvious routes is now measured and
 closed: batching does nothing for extraction, because `src/features.py` is a per-image
 loop and costs 18.3 ms per item whether it is handed 1 image or 128. That leaves a
 compiled implementation, a cheaper descriptor, or parallelising across images rather than
@@ -218,8 +224,9 @@ call discarded per configuration and 50 timed runs each. Classification cost, ms
 | 32 | 0.321 | 1.113 | 1.077 | 0.008 |
 | 128 | **0.097** | 0.374 | 0.382 | 0.005 |
 
-Batching amortises the dispatch overhead exactly as expected — the parallel configurations
-improve roughly a hundredfold from batch 1 to batch 128 — but they never overtake. At batch
+Batching amortises the dispatch overhead exactly as expected, and the parallel
+configurations improve roughly a hundredfold from batch 1 to batch 128, but they never
+overtake. At batch
 128 `n_jobs=1` is still 3.9× faster per item than either. The work being divided, 128 rows
 through 200 trees, stays smaller than the cost of handing it to a thread pool across the
 whole range a conveyor would plausibly use. The prediction was wrong; the single-threaded
@@ -238,8 +245,8 @@ items/min:
 At batch 1 the RF as trained misses the 1,200 target. From batch 8 every configuration
 clears it, and by batch 32 all four sit within 7% of each other, because extraction pins
 the ceiling at roughly 3,290 items/min no matter what the classifier does. So the thread
-count is a per-item latency decision, not a throughput decision — it stops mattering for
-throughput as soon as the line batches at all.
+count is a per-item latency decision, not a throughput decision, and it stops mattering
+for throughput as soon as the line batches at all.
 
 Read all of this as a characterisation of one machine, not a deployment recommendation.
 Timings are on an i9-9900KF with 16 logical cores, the batch-1 column above reproduces the
@@ -309,7 +316,10 @@ the test partition does not agree. Shuffling each group as a block, which is the
 granularity given how correlated the bins within a group are, gives H 27.2%, S 18.8%,
 V 21.4%, LBP 32.6% for the RF. MDI is measured on data the trees have already
 fitted and favours features offering more split points, so the disagreement is expected
-and the permutation numbers are the ones to trust.
+and the permutation numbers are the ones to trust. Measured that way texture is the
+largest single group rather than a near-equal fourth, which makes the case for fusing
+colour with texture an empirical result on this dataset rather than an argument from prior
+work.
 
 Two notes on how those numbers were computed, because both change the answer. Permuting
 one feature at a time understates any group whose bins are redundant with each other,
