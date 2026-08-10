@@ -35,21 +35,32 @@ Everything below is an upper bound on deployment performance, not an estimate of
 
 ![Accuracy, weighted F1, macro F1 and the three industrial metrics for all five classifiers](results/figures/master_comparison_all.png)
 
-The two linear rows are there to split the 54-point baseline-to-RF jump into its two
-causes. The rule-based baseline compares three HSV channel *means* against hand-set
-thresholds; the RF sees three 32-bin histograms plus a 26-bin LBP descriptor and learns
-where to cut. A linear model on the identical 122-dim vector gets the representation but
-not the non-linearity, so it separates the two contributions:
+The two linear rows are there to split the 54-point baseline-to-RF jump into its causes.
+Three things change between the rule-based baseline and the Random Forest: the input goes
+from three HSV channel means to three 32-bin histograms plus a 26-bin LBP descriptor, the
+decision boundary goes from hand-set thresholds to a learned one, and that boundary goes
+from linear to non-linear. Holding each fixed in turn separates them:
 
-| From | To | Gain |
-|---|---|---|
-| Channel means and thresholds (24.50%) | Full descriptor, linear boundary (68.95%) | **+44.45 points** |
-| Full descriptor, linear boundary (68.95%) | Full descriptor, Random Forest (78.95%) | **+10.00 points** |
+| Step | What changes | Accuracy | Gain |
+|---|---|---|---|
+| Channel means, hand-set thresholds | | 24.50% | |
+| Channel means, learned linear boundary | thresholds become learned | 42.11% | +17.61 points |
+| Full descriptor, learned linear boundary | 3 features become 122 | 68.95% | +26.84 points |
+| Full descriptor, Random Forest | boundary becomes non-linear | 78.95% | +10.00 points |
 
-Four fifths of the improvement is the descriptor, not the classifier. That is the same
-conclusion finding 1 reaches from the other direction. For external calibration, the
-original TrashNet work reported roughly 63% for an SVM on hand-designed features (Thung
-and Yang 2016), which the logistic regression here clears by about six points.
+The descriptor is still the largest single step at +26.84 points, so the earlier reading
+survives, but it is worth about half of the total rather than the four fifths a three-row
+version of this table implies. The second largest step is learning the boundary at all:
+fitting a logistic regression to the same three channel means the thresholds see is worth
++17.61 points on its own, which says the rule-based floor is low partly because the
+thresholds were set by hand and not only because three channel means are a poor
+representation. Non-linearity is the smallest step at +10.00 points, which is the same
+shape of result finding 1 reaches from the other direction: once the representation is
+fixed, changing the classifier family buys progressively less.
+
+For external calibration, the original TrashNet work reported roughly 63% for an SVM on
+hand-designed features (Thung and Yang 2016), which the logistic regression here clears by
+about six points.
 
 Per-class F1 on the 380-image test set:
 
@@ -94,6 +105,8 @@ hyperplanes to an ensemble of trees, all break on the same pair, and the weaker 
 the worse it breaks. Nothing about that pattern suggests a classifier is the missing
 piece.
 
+![Confusion matrices for logistic regression and the linear SVC, with the glass and metal off-diagonal cells the largest non-diagonal entries in both](results/figures/linear_baseline_confusion_matrices.png)
+
 The mechanism is visible in the images. Transparent glass lets the grey background
 dominate its histogram, and metal is specular grey. Both land in the same low-saturation
 region of HSV with similarly smooth LBP texture profiles.
@@ -123,6 +136,11 @@ number, not by density.
 
 ### 2. Clean accuracy does not decide the deployment question
 
+Four failure modes a conveyor sensor plausibly produces, applied to the raw image before
+feature extraction rather than to the feature vector, at five severities each:
+
+![Motion blur, Gaussian noise, brightness reduction and JPEG compression applied to one plastic bottle at clean, severity 3 and severity 5](results/figures/perturbation_examples_improved.png)
+
 Accuracy at worst-case severity for each perturbation:
 
 | Perturbation | Random Forest | MLP |
@@ -132,9 +150,12 @@ Accuracy at worst-case severity for each perturbation:
 | Brightness reduction | 0.418 | 0.358 |
 | JPEG compression | 0.253 | 0.300 |
 
-Two of these rows are noise. Chance on six classes is 16.7%, so at worst-case Gaussian
-noise both models have already failed and the RF's lead is a lead inside a region where
-nothing works. The JPEG margin is small enough to ignore. The row that carries real
+Chance on six classes is 0.167. That is the floor every number in this table and in the
+severity curves below should be read against, and neither figure draws it.
+
+Two of these rows are noise. At worst-case Gaussian noise both models have already failed
+and the RF's lead is a lead inside a region where nothing works. The JPEG margin is small
+enough to ignore. The row that carries real
 information is motion blur, where the RF is 14.7 points ahead of a model it cannot be
 separated from on clean data, with brightness reduction showing the same ordering from
 the mildest severity onward.
@@ -146,6 +167,8 @@ transitions that produce uniform codes. Both halves of the descriptor lose their
 the same severity, which is why the drop from clean to mild noise is a cliff rather than
 a slope. That makes noise a hardware problem (illumination and sensor quality) or a
 pre-filtering problem, not something the classifier can absorb.
+
+![Mean feature vector per channel group under clean conditions, mild noise and severe noise, showing the H and S histograms flattening while the LBP histogram concentrates into its non-uniform catch-all bin](results/figures/gaussian_noise_feature_shift.png)
 
 So the model choice is conditional on the imaging environment. In a controlled enclosure,
 take the MLP for its latency headroom. Where blur or illumination cannot be controlled,
@@ -171,6 +194,7 @@ than on the model:
 |---|---|---|---|
 | RF, `n_jobs=1` | 9.3 ms | 27.7 ms | yes |
 | RF, `n_jobs=2` | 36.3 ms | 54.7 ms | no |
+| RF, `n_jobs=4` | 35.1 ms | 53.5 ms | no |
 | RF, `n_jobs=-1` | 39.4 ms | 57.8 ms | no |
 | MLP | 0.10 ms | 18.5 ms | yes |
 
@@ -280,28 +304,37 @@ the standard pair and trade off against each other. Recovery here is the composi
 TP/(TP+FP+FN), which penalises output contamination and lost material in one number.
 
 **Feature contributions.** Mean impurity decrease splits the RF's decisions almost evenly
-across the four groups (H 22.8%, S 24.7%, V 25.5%, LBP 27.1%). Permutation importance does
-not agree: H 36.2%, S 32.7%, LBP 20.6%, V 10.5%. MDI is measured on data the trees have
-already fitted and favours features offering more split points, so the disagreement is
-expected and the permutation numbers are the ones to trust. They say colour carries about
-four fifths of the RF's recoverable signal, and that V is largely redundant once H and S
-are present.
+across the four groups (H 22.8%, S 24.7%, V 25.5%, LBP 27.1%). Permutation importance on
+the test partition does not agree. Shuffling each group as a block, which is the right
+granularity given how correlated the bins within a group are, gives H 27.2%, S 18.8%,
+V 21.4%, LBP 32.6% for the RF. MDI is measured on data the trees have already
+fitted and favours features offering more split points, so the disagreement is expected
+and the permutation numbers are the ones to trust.
 
-Two things stop 20.6% from being read as texture being marginal. Single-feature
-permutation understates any group whose features are redundant with each other, because
-shuffling one bin leaves its neighbours to carry the signal, and LBP is by far the most
+Two notes on how those numbers were computed, because both change the answer. Permuting
+one feature at a time understates any group whose bins are redundant with each other,
+since shuffling one leaves its neighbours to carry the signal, and LBP is by far the most
 internally correlated group (mean |r| 0.531 within LBP against 0.14 to 0.21 within the
-colour channels, notebook 10) — so 20.6% is a floor for texture, not an estimate. And the
-MLP, which uses all 122 inputs at once rather than one per split, spreads its permutation
-importance almost evenly (H 24.9%, S 26.0%, V 21.1%, LBP 28.1%) with texture the single
-largest group. The claim that texture is independent signal rather than a proxy for colour
-rests on cross-group correlation staying below 0.14 and is unchanged; what the permutation
-numbers revise is how much of the RF's accuracy that independent signal is worth.
+colour channels, notebook 10). And summing signed per-feature scores understates any group
+whose individual bins sit near zero, because negative values, which mean shuffling
+happened to improve the score, cancel real positive ones. V is affected by both: 14 of its
+32 bins score negative and 20 of 32 have a mean smaller than their own standard deviation.
+Block permutation avoids both problems, which is why it is what the numbers above report.
+The two treatments do not agree everywhere: clipping negatives while still permuting one
+feature at a time gives H 31.5%, S 29.0%, V 19.6%, LBP 20.0%, so moving to block
+permutation adds 12.6 points to LBP and takes 10.2 off S, which is the redundancy effect
+showing up as a number.
 
-![Mean impurity decrease against permutation importance for the Random Forest, by H/S/V/LBP group](results/figures/permutation_vs_mdi.png)
+The MLP, which uses all 122 inputs at once rather than one per split, spreads its
+importance more evenly (H 21.4%, S 23.9%, V 24.9%, LBP 29.7%). The claim that texture is
+independent signal rather than a proxy for colour rests on cross-group correlation staying
+below 0.14 and is unchanged. What the permutation numbers revise is how much of each
+model's accuracy that signal is worth.
 
-Permutation importance is computed on the test partition with 30 repeats per feature,
-scored on weighted F1, for both models (notebook 11).
+![Mean impurity decrease against clipped per-feature and grouped block permutation importance for the Random Forest, by H/S/V/LBP group](results/figures/permutation_vs_mdi.png)
+
+Permutation is computed on the test partition with 30 repeats, scored on weighted F1, for
+both models (notebook 11).
 
 ---
 
@@ -342,6 +375,16 @@ re-extracts features from all 2,527 images 21 times and takes roughly 20 minutes
 ---
 
 ## Technical notes
+
+**Class ordering.** scikit-learn orders classes alphabetically
+(`cardboard, glass, metal, paper, plastic, trash`), which is *not* the order of the
+`CLASSES` list. Anything labelling a confusion matrix, classification report or
+per-class table uses `CLASS_ORDER = sorted(CLASSES)` and passes it as `labels=` so the
+ordering is pinned explicitly. Passing an unsorted list to `target_names` or
+`display_labels` silently mislabels every per-class result without raising an error, and
+nothing in the output looks wrong: the support column still sums correctly and the
+diagonal still looks like a diagonal. An earlier version of this analysis identified the
+wrong pair of classes as the dominant confusion for exactly this reason.
 
 **One feature pipeline.** All feature extraction lives in `src/features.py`. Notebook 02
 derives the pipeline step by step and then asserts the module reproduces it exactly, so
