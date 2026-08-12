@@ -1,0 +1,8 @@
+Model,Seeds,Pair,Errors,Pair share %,Pair share std %
+Logistic Regression (122-dim),1,21.0,118.0,17.8,
+Linear SVC (122-dim),1,25.0,125.0,20.0,
+Random Forest (122-dim),1,16.0,80.0,20.0,
+MLP (122-dim),1,17.0,74.0,23.0,
+Frozen ImageNet probe,5,13.8,63.2,21.8,3.1
+ResNet18 from scratch,5,17.4,78.4,22.1,4.5
+ResNet18 fine-tuned,5,7.6,29.8,24.2,11.8

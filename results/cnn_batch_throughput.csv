@@ -1,0 +1,5 @@
+Batch,Preprocess ms/item,Forward ms/item,End-to-end ms/item,Items/min,Clears 1200/min?
+1,2.752,17.443,20.195,2971.1,yes
+8,2.579,10.381,12.96,4629.7,yes
+32,2.592,10.802,13.394,4479.7,yes
+128,2.593,9.766,12.359,4854.8,yes

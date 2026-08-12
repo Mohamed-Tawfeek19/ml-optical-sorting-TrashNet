@@ -30,3 +30,10 @@ desktop.ini
 # Note: results/ IS committed. The trained models, extracted features and
 # figures are kept in the repo so demo_classifier.ipynb runs immediately on
 # clone without a 10-minute feature extraction and training pass.
+#
+# The one exception is the ResNet18 checkpoint, at 43 MB against 13 MB for the
+# largest committed pickle. It is a reference point rather than part of the
+# classical pipeline, nothing in the demo touches it, and its scores are all
+# committed as CSV, JSON and .npy. Run notebook 16 to regenerate it; notebook 17
+# needs it and says so.
+results/cnn_final_model.pt

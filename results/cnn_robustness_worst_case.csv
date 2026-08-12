@@ -1,0 +1,5 @@
+Perturbation,Random Forest,MLP,ResNet18
+Motion Blur,0.658,0.511,0.813
+Gaussian Noise,0.234,0.168,0.368
+Brightness Reduction,0.418,0.358,0.492
+JPEG Compression,0.253,0.3,0.618

@@ -1,0 +1,6 @@
+Model,glass as metal,metal as glass,Pair total,Total errors,Share of errors
+Logistic Regression,7,14,21,118,0.178
+Linear SVC,11,14,25,125,0.2
+Random Forest,8,8,16,80,0.2
+MLP,10,7,17,74,0.23
+ResNet18 (reference),1,1,2,19,0.105

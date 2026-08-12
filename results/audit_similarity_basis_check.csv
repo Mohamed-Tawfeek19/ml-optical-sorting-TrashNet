@@ -1,0 +1,6 @@
+Threshold,"Flagged, fine-tuned features","Flagged, frozen ImageNet features"
+0.85,326,174
+0.9,242,40
+0.93,136,18
+0.95,51,8
+0.97,11,7

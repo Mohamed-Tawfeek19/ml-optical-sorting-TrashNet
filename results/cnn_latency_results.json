@@ -1,0 +1,108 @@
+{
+  "device_note": "CPU timings are the comparison; see notebook 07 for the classical pipeline",
+  "preprocess_ms": 2.560882999872168,
+  "preprocess_std_ms": 0.16708324439955127,
+  "default_threads": 8,
+  "logical_cpus": 16,
+  "best_thread_count": 8,
+  "cpu_threads": [
+    {
+      "Threads": 1,
+      "Forward ms": 48.641,
+      "End-to-end ms": 51.202,
+      "Within 50 ms?": "no",
+      "Items/min": 1171.8
+    },
+    {
+      "Threads": 2,
+      "Forward ms": 28.164,
+      "End-to-end ms": 30.725,
+      "Within 50 ms?": "yes",
+      "Items/min": 1952.8
+    },
+    {
+      "Threads": 4,
+      "Forward ms": 19.361,
+      "End-to-end ms": 21.922,
+      "Within 50 ms?": "yes",
+      "Items/min": 2737.0
+    },
+    {
+      "Threads": 8,
+      "Forward ms": 17.765,
+      "End-to-end ms": 20.326,
+      "Within 50 ms?": "yes",
+      "Items/min": 2951.8
+    },
+    {
+      "Threads": 16,
+      "Forward ms": 20.592,
+      "End-to-end ms": 23.153,
+      "Within 50 ms?": "yes",
+      "Items/min": 2591.5
+    }
+  ],
+  "cpu_batched": [
+    {
+      "Batch": 1,
+      "Preprocess ms/item": 2.752,
+      "Forward ms/item": 17.443,
+      "End-to-end ms/item": 20.195,
+      "Items/min": 2971.1,
+      "Clears 1200/min?": "yes"
+    },
+    {
+      "Batch": 8,
+      "Preprocess ms/item": 2.579,
+      "Forward ms/item": 10.381,
+      "End-to-end ms/item": 12.96,
+      "Items/min": 4629.7,
+      "Clears 1200/min?": "yes"
+    },
+    {
+      "Batch": 32,
+      "Preprocess ms/item": 2.592,
+      "Forward ms/item": 10.802,
+      "End-to-end ms/item": 13.394,
+      "Items/min": 4479.7,
+      "Clears 1200/min?": "yes"
+    },
+    {
+      "Batch": 128,
+      "Preprocess ms/item": 2.593,
+      "Forward ms/item": 9.766,
+      "End-to-end ms/item": 12.359,
+      "Items/min": 4854.8,
+      "Clears 1200/min?": "yes"
+    }
+  ],
+  "gpu_name": "NVIDIA GeForce RTX 5060",
+  "gpu_forward": [
+    {
+      "Batch": 1,
+      "Forward ms/item": 3.8249,
+      "End-to-end ms/item": 6.386,
+      "Items/min": 9395.9
+    },
+    {
+      "Batch": 8,
+      "Forward ms/item": 0.4881,
+      "End-to-end ms/item": 3.049,
+      "Items/min": 19679.0
+    },
+    {
+      "Batch": 32,
+      "Forward ms/item": 0.4174,
+      "End-to-end ms/item": 2.978,
+      "Items/min": 20145.8
+    },
+    {
+      "Batch": 128,
+      "Forward ms/item": 0.4205,
+      "End-to-end ms/item": 2.981,
+      "Items/min": 20125.0
+    }
+  ],
+  "latency_target_ms": 50,
+  "target_items_per_min": 1200
+}
