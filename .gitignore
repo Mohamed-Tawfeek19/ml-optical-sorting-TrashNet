@@ -28,7 +28,7 @@ desktop.ini
 *.swp
 
 # Note: results/ IS committed. The trained models, extracted features and
-# figures are kept in the repo so demo_classifier.ipynb runs immediately on
+# figures are kept in the repo so demo/demo_classifier.ipynb runs immediately on
 # clone without a 10-minute feature extraction and training pass.
 #
 # The one exception is the ResNet18 checkpoint, at 43 MB against 13 MB for the

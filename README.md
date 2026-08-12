@@ -174,8 +174,8 @@ classifier is the missing piece.
 The mechanism is visible in the images. Transparent glass lets the grey background
 dominate its histogram, and metal is specular grey. Both land in the same low-saturation
 region of HSV with similarly smooth LBP texture profiles.
-`demo_classifier.ipynb` shows a glass bottle and a tin can that both models get exactly
-backwards.
+`demo/demo_classifier.ipynb` shows a glass bottle and a tin can that both models get
+exactly backwards.
 
 **The CNN reference point moves the pair, and notebook 17 audits how far.** Notebook 16
 fine-tunes a ResNet18 on the same training images and scores it on the same 380 test images.
@@ -517,14 +517,15 @@ cores, so every figure quoted here comes from a run with the machine otherwise i
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook notebooks/demo_classifier.ipynb
+jupyter notebook demo/demo_classifier.ipynb
 ```
 
-The trained models and extracted features are committed, so the demo runs immediately
-without the dataset or a training pass. It loads an image, shows its HSV and LBP feature
+The trained models and extracted features are committed, and so are the three images the
+demo classifies, under `demo/images/`. The demo therefore runs on a clean clone with no
+dataset download and no training pass. It loads an image, shows its HSV and LBP feature
 histograms, and runs both classifiers with confidence scores.
 
-To run anything else you need the dataset. See below.
+Every other notebook needs the full dataset. See below.
 
 ---
 
@@ -653,7 +654,9 @@ notebooks/
   07  latency & throughput        15  McNemar test + multi-seed sweep
   08  industrial sorting metrics  16  CNN reference point (ResNet18)
                                   17  audit of the CNN reference point
-                                  demo_classifier, start here
+demo/
+  demo_classifier.ipynb           start here, runs on a clean clone
+  images/                         the three TrashNet images the demo classifies
 results/
   *.pkl, *.npy, *.csv, figures/   committed outputs
   cnn_final_model.pt              ResNet18 weights, gitignored, run notebook 16
@@ -788,6 +791,8 @@ project report, Stanford University. https://github.com/garythung/trashnet
 ## Dataset and licence
 
 TrashNet, 2,527 images across six classes, from Thung & Yang (2016),
-https://github.com/garythung/trashnet. Not redistributed here.
+https://github.com/garythung/trashnet. Not redistributed here, apart from the three images
+under `demo/images/` that keep the demo notebook self-contained; attribution to Thung &
+Yang (2016) is unchanged.
 
 Code released under the MIT Licence. See [LICENSE](LICENSE).
